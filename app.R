@@ -7,6 +7,8 @@ library(ggrepel)
 library(readxl)
 library(shinyWidgets)
 
+library(RSQLite)
+
 source("peak deposition analysis.R")
 
 ui <- fluidPage(
@@ -56,6 +58,7 @@ ui <- fluidPage(
 
 server <- function(input, output) {
   peaks_data <- reactive({
+      mydb <- dbConnect(SQLite(), "webshs-db.sqlite")
       if(input$windows == 1) {
         aer <- 2.0
       } else {
@@ -84,6 +87,8 @@ server <- function(input, output) {
       } else { 
         night_smoking <- FALSE
       }
+      
+      dbDisconnect(mydb)
 
       generate_peaks(input$cigarettes, 
                      aer, 
